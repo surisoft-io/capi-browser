@@ -1,0 +1,75 @@
+<div class="uk-container">
+  <div class="uk-text-large uk-text-lead-capi">Deployed Routes ({{ endpoint }})</div><br/>
+  <span uk-spinner="ratio: 4.5" style="position:absolute; top:50%; left:50%;" *ngIf="showSpinner"></span> 
+  <div class="uk-inline">
+    <span class="uk-form-icon" uk-icon="icon: search"></span>
+    <input type="text" class="uk-input uk-form-width-large" placeholder="Search route here..."
+    [(ngModel)]="searchText">
+  </div>
+  <table class="uk-table uk-table-striped" *ngIf="dataLoaded">
+    <thead>
+      <tr>
+        <th>Route Id</th>
+        <th>Uptime (min:sec)</th>
+        <th>Calls Failed</th>
+        <th>Calls Inflight</th>
+        <th>Total calls</th>
+        <th>Last Processing Time</th>
+        <th>Max Processing Time</th>
+        <th>Status</th>
+        <th>Endpoints</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of dataSource | searchFilter: searchText">
+        <td>{{ item.id }}</td>
+        <td>{{ item.uptime }}</td>
+        <td><span class="uk-badge-red">{{ item.exchangesFailed }}</span></td>
+        <td>{{ item.exchangesInflight }}</td>
+        <td><span class="uk-badge-green">{{ item.exchangesTotal }}</span></td>
+        <td>{{ item.lastProcessingTime }}</td>
+        <td><span class="uk-badge-red">{{ item.maxProcessingTime }}</span></td>
+        <td>{{ item.state }}</td>
+        <td>
+          <div class="uk-inline">
+            <button class="uk-button uk-button-primary" type="button" (click)="showDetails(item)">Details</button>
+            <div class="uk-flex-top" id="detailsModal" uk-modal>
+              <div class="uk-modal-dialog uk-modal-body">
+                <div uk-grid>
+                  <dl class="uk-description-list">
+                    <dt class="uk-text-bold uk-text-primary">ID</dt>
+                    <dd>{{ apiDetails.id }}</dd>
+                    <dt class="uk-text-bold uk-text-primary">Name</dt>
+                    <dd>{{ apiDetails.name }}</dd>
+                    <dt class="uk-text-bold uk-text-primary">Context</dt>
+                    <dd>{{ apiDetails.context }}</dd>
+                    <dt class="uk-text-bold uk-text-primary">Round robin enabled</dt>
+                    <dd>{{ apiDetails.roundRobinEnabled }}</dd>
+                    <dt class="uk-text-bold uk-text-primary">Failover enabled</dt>
+                    <dd>{{ apiDetails.failoverEnabled }}</dd>
+                    <dt class="uk-text-bold uk-text-primary">Match on prefix</dt>
+                    <dd>{{ apiDetails.matchOnUriPrefix }}</dd>
+                    <dt class="uk-text-bold uk-text-primary">Protocol</dt>
+                    <dd>{{ apiDetails.httpProtocol }}</dd>
+                    <dt class="uk-text-bold uk-text-primary">Endpoints</dt>
+                    <dd>
+                      <ul *ngFor="let mapping of apiDetails.mappingList" class="uk-list">
+                        <li>{{ mapping.rootContext }}</li>
+                        <li>{{ mapping.hostname }}</li>
+                        <li>{{ mapping.port }}</li>
+                      </ul>
+                    </dd>
+                  </dl>
+                </div>
+                <p class="uk-text-right">
+                  <button class="uk-modal-close uk-button uk-button-primary" type="button"
+                    (click)="closeDetailsModal(item)">Close</button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

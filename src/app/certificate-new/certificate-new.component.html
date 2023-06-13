@@ -1,0 +1,24 @@
+<div class="uk-container">
+    <div class="uk-text-large uk-text-lead-capi">Add certificate</div><br/>
+    <div class="uk-alert-warning" uk-alert>
+        <a class="uk-alert-close" uk-close></a>
+        <p>Any change to the certificate controller will trigger a reload of all routes, please consider doing it outside working hours.</p>
+      </div>
+    <div class="uk-margin"></div>
+    <form [formGroup]="certificateForm" (ngSubmit)="submit()">
+        <div class="uk-width-1-2@s uk-margin">
+            <input formControlName="alias" id="alias" class="uk-input" type="text" placeholder="Alias">
+        </div>
+        <div class="uk-width-1-2@s">
+            <input formControlName="apiId" id="apiId" class="uk-input" type="text" placeholder="Route Id">
+        </div>
+        <div class="uk-margin" uk-margin>
+            <div uk-form-custom="target: true">
+                <input formControlName="file" id="file" type="file" (change)="onFileChange($event)">
+                <input class="uk-input uk-form-width-medium" type="text" placeholder="Select file" disabled>
+            </div>
+            <button class="uk-button uk-button-danger">Submit</button>
+            <a class="uk-button uk-button-default" href="/certificates">Cancel</a>
+        </div>
+    </form>
+</div>

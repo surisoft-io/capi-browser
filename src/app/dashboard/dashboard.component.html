@@ -1,0 +1,35 @@
+<div class="uk-container">
+    <div class="uk-text-large uk-text-lead-capi">Dashboard</div><br/>
+    <span uk-spinner="ratio: 4.5" style="position:absolute; top:50%; left:50%;" *ngIf="showSpinner"></span>
+    <table class="uk-table uk-table-striped" *ngIf="dataLoaded">
+        <tr>
+            <td>CAPI Version</td>
+            <td><span class="uk-badge">{{capiStatistics.capiVersion}}</span></td>
+        </tr>
+        <tr>
+            <td>Spring Boot Version</td>
+            <td><span class="uk-badge">{{capiStatistics.capiSpringVersion}}</span></td>
+        </tr>
+        <tr>
+            <td>Apache Camel Version</td>
+            <td><span class="uk-badge">{{capiStatistics.camelVersion}}</span></td>
+        </tr>
+        <tr>
+            <td>Start Time</td>
+            <td>{{capiStatistics.startTimestamp}}</td>
+        </tr>
+        <tr>
+            <td>Uptime</td>
+            <td><span class="uk-badge-green">{{capiStatistics.uptime}}</span></td>
+        </tr>
+        <tr>
+            <td>Total Routes</td>
+            <td><span class="uk-badge-green">{{capiStatistics.totalRoutes}}</span></td>
+        </tr>
+        <tr>
+            <td>Capi Browser Endpoint (Origin)</td>
+            <td>{{capiBrowserEndpoint}}</td>
+        </tr>
+
+    </table>
+</div>

@@ -1,0 +1,44 @@
+<div class="uk-container">
+  <div class="uk-text-large uk-text-lead-capi">Trust store entries for node: {{ capiEndpoint }}</div><br/>
+  <div class="uk-alert-warning" uk-alert>
+    <a class="uk-alert-close" uk-close></a>
+    <p>Any change to the certificate controller will trigger a reload of all routes, please consider doing it outside working hours.</p>
+  </div>
+  <span uk-spinner="ratio: 4.5" style="position:absolute; top:50%; left:50%;" *ngIf="showSpinner"></span>
+  <table class="uk-table uk-table-striped" *ngIf="dataLoaded">
+    <thead>
+      <tr>
+        <th>Alias</th>
+        <th>Issuer DN</th>
+        <th>Subject DN</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let certificate of certificates">
+        <td>{{ certificate.alias }}</td>
+        <td>{{ certificate.issuerDN }}</td>
+        <td>{{ certificate.subjectDN }}</td>
+        <td><button class="uk-button uk-button-danger" (click)="openDeleteModal(certificate)">Delete</button></td>
+      </tr>
+    </tbody>
+  </table>
+  <a href="/certificate-new" class="uk-align-right uk-margin uk-modal-close uk-button uk-button-primary">Import New Certificate</a>
+</div>
+<div id="deleteModal" class="uk-flex-top" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+
+      <p>Delete certificate with alias: {{ aliasToDelete }} ?</p>
+      <div class="uk-alert-warning" uk-alert>
+        <a class="uk-alert-close" uk-close></a>
+        <p>Any change to the certificate controller will trigger a reload of all routes, please consider doing it outside working hours.</p>
+      </div>
+
+      <div class="uk-modal-footer uk-text-right">
+        <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+        <button class="uk-button uk-button-danger" type="button" (click)="confirmDelete()">Delete</button>
+    </div>   
+  </div>
+</div>
