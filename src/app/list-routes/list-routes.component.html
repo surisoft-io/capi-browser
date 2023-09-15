@@ -1,5 +1,10 @@
 <div class="uk-container">
-  <div class="uk-text-large uk-text-lead-capi">Deployed Routes ({{ endpoint }})</div><br/>
+  <div class="uk-text-large uk-text-lead-capi">Deployed Routes: 
+    <span *ngFor="let endpoint of endpointList">
+      <span class="uk-badge">{{endpoint}}</span>
+    </span>
+  </div>  
+  <br/>
   <span uk-spinner="ratio: 4.5" style="position:absolute; top:50%; left:50%;" *ngIf="showSpinner"></span> 
   <div class="uk-inline">
     <span class="uk-form-icon" uk-icon="icon: search"></span>
@@ -12,9 +17,7 @@
         <th>Route Id</th>
         <th>Uptime (min:sec)</th>
         <th>Calls Failed</th>
-        <th>Calls Inflight</th>
         <th>Total calls</th>
-        <th>Last Processing Time</th>
         <th>Max Processing Time</th>
         <th>Status</th>
         <th>Endpoints</th>
@@ -25,9 +28,7 @@
         <td>{{ item.id }}</td>
         <td>{{ item.uptime }}</td>
         <td><span class="uk-badge-red">{{ item.exchangesFailed }}</span></td>
-        <td>{{ item.exchangesInflight }}</td>
         <td><span class="uk-badge-green">{{ item.exchangesTotal }}</span></td>
-        <td>{{ item.lastProcessingTime }}</td>
         <td><span class="uk-badge-red">{{ item.maxProcessingTime }}</span></td>
         <td>{{ item.state }}</td>
         <td>

@@ -9,10 +9,17 @@ import { environment } from "src/environments/environment";
 export class DashboardComponent implements OnInit {
 
     serverStatistics: any = "";
-    capiStatistics: any = "";
+    //capiStatistics: any = "";
     dataLoaded: boolean = false;
     showSpinner: boolean = true;
+    
     capiBrowserEndpoint: string = environment.capiBrowserEndpoint;
+    capiEndpointList: string[] = environment.capiEndpointList;
+
+    //uptimeList: string[] = [];
+    //totalRoutesList: number[] = [];
+
+    capiStatisticsList: any[] = [];
 
     constructor(private http: HttpClient) { }
 
@@ -20,32 +27,37 @@ export class DashboardComponent implements OnInit {
         this.getCapiStatistics();
     }
 
-    getStatisticsCall() {
+    /*getStatisticsCall() {
         let endpoint = localStorage.getItem("capiEndpoint");
         return this.http.get(endpoint + environment.statisticsEndpoint);
+    }*/
+
+    getCapiStatisticsCall(node: string) {
+        return this.http.get(node + environment.statisticsEndpoint);
     }
 
-    getCapiStatisticsCall() {
-        let endpoint = localStorage.getItem("capiEndpoint");
-        return this.http.get(endpoint + environment.statisticsEndpoint);
-    }
-
-    getStatistics() {
+    /*getStatistics() {
         this.getStatisticsCall()
             .subscribe((data: any) => {
                 this.serverStatistics = data.value;
                 this.showSpinner = false;
                 this.dataLoaded = true;
             });
-    }
+    }*/
 
     getCapiStatistics() {
-        this.getCapiStatisticsCall()
+        this.capiEndpointList.forEach(node => {
+            this.getCapiStatisticsCall(node)
             .subscribe((data: any) => {
-                this.capiStatistics = data;
-                this.showSpinner = false;
-                this.dataLoaded = true;
+                data.node = node;
+                data.totalRoutes = (data.totalRoutes -1) / 2;
+                //this.uptimeList.push(data.uptime);
+                //this.totalRoutesList.push();
+                //this.capiStatistics = data;
+                this.capiStatisticsList.push(data);
             });
-
+        });
+        this.showSpinner = false;
+        this.dataLoaded = true;
     }
 }

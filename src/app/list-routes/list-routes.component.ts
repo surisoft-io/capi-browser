@@ -25,25 +25,23 @@ export class ListRoutesComponent implements OnInit {
 
   dataLoaded: boolean = false;
   showSpinner: boolean = true;
-
-  endpoint: string = localStorage.getItem("capiEndpoint")!;
+  endpointList: string[] = environment.capiEndpointList;
 
   constructor(private http: HttpClient) {
     UIkit.modal("detailsModal",);
   }
 
   ngOnInit(): void {
-    this.getRoutesThreadInfo();
+    this.iterateNodes();
   }
 
   getDetailsCall(routeId: string) {
     let normalizedRouteId = routeId.substring(0, routeId.lastIndexOf(":"));
-    return this.http.get(this.endpoint + environment.cachedApiEndpoint + normalizedRouteId);
+    return this.http.get(this.endpointList[0] + environment.cachedApiEndpoint + normalizedRouteId);
   }
 
-  getRoutesThreadInfoCall() {
-    let endpoint = localStorage.getItem("capiEndpoint");
-    return this.http.get(endpoint + environment.allRoutesEndpoint);
+  getRoutesThreadInfoCall(endpoint: string) {
+    return this.http.get(endpoint);
   }
 
   getDetails(routeId: string) {
@@ -54,32 +52,44 @@ export class ListRoutesComponent implements OnInit {
       });
   }
 
-  getRoutesThreadInfo() {
+  iterateNodes() {
     let tempRouteList: CapiRoute[] = [];
-    this.getRoutesThreadInfoCall()
+    this.endpointList.forEach(node => {
+      this.getRoutesThreadInfoCall(node + environment.allRoutesEndpoint)
       .subscribe((data: any) => {
         for(let idx in data) {
           var val = data[idx];
           var id = val.id;
-          var route = new CapiRoute(id);
-          route.exchangesFailed = val.details.failuresHandled;
-          route.exchangesInflight = val.details.exchangesInflight;
-          route.exchangesTotal = val.details.exchangesTotal;
-          route.lastProcessingTime = val.details.lastProcessingTime;
-          route.maxProcessingTime = val.details.maxProcessingTime;
-          route.state = val.status;
-          route.uptime = val.uptime;
-          this.routeMap.set(id, route);
-          tempRouteList.push(route);
+          let existingRoute = tempRouteList.find(e => e.id === id);
+          if(existingRoute === undefined) {
+            existingRoute = new CapiRoute(id);
+            existingRoute.exchangesFailed = val.details.failuresHandled;
+            existingRoute.exchangesTotal = val.details.exchangesTotal;
+            existingRoute.maxProcessingTime = val.details.maxProcessingTime;
+            existingRoute.state = val.status;
+            existingRoute.uptime = val.uptime;
+            tempRouteList.push(existingRoute);
+            this.routeMap.set(id, existingRoute);
+          } else {
+            existingRoute.exchangesFailed = existingRoute.exchangesFailed + val.details.failuresHandled;
+            if(val.details.maxProcessingTime > existingRoute.maxProcessingTime) {
+              existingRoute.maxProcessingTime = val.details.maxProcessingTime
+            }
+            existingRoute.exchangesTotal = existingRoute.exchangesTotal + val.details.exchangesTotal;
+            existingRoute.maxProcessingTime = val.details.maxProcessingTime;
+            existingRoute.state = val.status;
+            existingRoute.uptime = val.uptime;
+          }
         }
-        this.dataSource = tempRouteList;
+      });
+    });
+    this.dataSource = tempRouteList;
         this.dataSource.sort((a, b) => a.id > b.id ? 1 : -1)
         this.dataSource.forEach((_routes) => {
           _routes.isExpanded = false;
         });
-        this.dataLoaded = true;
-        this.showSpinner = false;
-      });
+    this.dataLoaded = true;
+    this.showSpinner = false;
   }
 
   showDetails(route: CapiRoute) {
